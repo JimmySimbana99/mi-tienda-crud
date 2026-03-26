@@ -11,7 +11,7 @@ app.use(express.static('public'));
 const mongoURI = "mongodb+srv://abelagogo2000_db_user:4veyiSNEXZLTeYNh@cluster0.rpmb9dz.mongodb.net/TiendaDB?retryWrites=true&w=majority";
 
 mongoose.connect(mongoURI)
-  .then(() => console.log("✅ Conectado a MongoDB Atlas"))
+  .then(() => console.log("✅ Conectado a MongoDB Atlas si"))
   .catch(err => console.error("❌ Error:", err));
 
 // MODELO DE PRODUCTO
