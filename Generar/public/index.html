@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Inventario</title>
+    <style>
+        body { display: flex; margin: 0; font-family: 'Segoe UI', sans-serif; height: 100vh; background: #f0f2f5; }
+        #sidebar { width: 260px; background: #2c3e50; color: white; padding: 20px; box-sizing: border-box; }
+        .nav-item { padding: 15px; cursor: pointer; border-radius: 5px; margin-bottom: 5px; transition: 0.3s; }
+        .nav-item:hover { background: #34495e; }
+        #main { flex-grow: 1; padding: 40px; overflow-y: auto; }
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        input { padding: 10px; margin: 5px 0; width: 100%; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; }
+        button { padding: 10px 20px; background: #3498db; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
+        .btn-del { background: #e74c3c; padding: 5px 10px; }
+    </style>
+</head>
+<body>
+
+<div id="sidebar">
+    <h2>ADMIN PANEL</h2>
+    <hr>
+    <div class="nav-item" onclick="ver('form')">➕ INSERTAR PRODUCTO</div>
+    <div class="nav-item" onclick="ver('lista')">👁️ VISUALIZAR PRODUCTOS</div>
+</div>
+
+<div id="main">
+    <div id="sec-form" class="card">
+        <h3>Nuevo Producto</h3>
+        <input type="text" id="nom" placeholder="Nombre del producto">
+        <input type="number" id="pre" placeholder="Precio">
+        <input type="number" id="can" placeholder="Cantidad">
+        <button onclick="guardar()">Guardar en Inventario</button>
+    </div>
+
+    <div id="sec-lista" class="card" style="display:none">
+        <h3>Inventario Total</h3>
+        <input type="text" id="busqueda" placeholder="🔍 Filtrar por nombre..." oninput="listar()">
+        <table>
+            <thead><tr><th>Nombre</th><th>Precio</th><th>Stock</th><th>Acción</th></tr></thead>
+            <tbody id="tablaBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
