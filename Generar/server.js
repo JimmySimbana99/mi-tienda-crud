@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const PORT = process.env.PORT || 3000;
 const app = express();
 
 app.use(express.json());
@@ -39,4 +40,6 @@ app.delete('/api/productos/:id', async (req, res) => {
     res.json({ msj: "Eliminado" });
 });
 
-app.listen(3000, () => console.log("Servidor en http://localhost:3000"));
+app.listen(PORT, () => {
+    console.log(`✅ Servidor funcionando en el puerto ${PORT}`);
+});
