@@ -1,64 +1,64 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const path = require('path'); // Agregamos esto para manejar rutas
+const path = require('path');
 
 const app = express();
-
 app.use(express.json());
 app.use(cors());
 
-// AJUSTE DE RUTA: Como server.js está en /src, subimos un nivel para encontrar /public
+// Archivos estáticos
 app.use(express.static(path.join(__dirname, '../public')));
 
-// CONEXIÓN A TU MONGODB ATLAS
+// CONEXIÓN MONGO ATLAS
 const mongoURI = "mongodb+srv://abelagogo2000_db_user:4veyiSNEXZLTeYNh@cluster0.rpmb9dz.mongodb.net/TiendaDB?retryWrites=true&w=majority";
-
 mongoose.connect(mongoURI)
-  .then(() => console.log("✅ Conectado a MongoDB Atlas si"))
-  .catch(err => console.error("❌ Error de conexión:", err));
+  .then(() => console.log("✅ Conectado a MongoDB Atlas"))
+  .catch(err => console.error("❌ Error:", err));
 
-// MODELO DE PRODUCTO
+// MODELO
 const Producto = mongoose.model('Producto', {
     nombre: String,
     precio: Number,
     cantidad: Number
 });
 
-// RUTAS API
+// --- RUTAS ---
+
+// Listar productos
 app.get('/api/productos', async (req, res) => {
-    try {
-        const { q } = req.query;
-        const filtro = q ? { nombre: new RegExp(q, 'i') } : {};
-        const productos = await Producto.find(filtro);
-        res.json(productos);
-    } catch (error) {
-        res.status(500).json({ error: "Error al obtener productos" });
-    }
+    const { q } = req.query;
+    const filtro = q ? { nombre: new RegExp(q, 'i') } : {};
+    const productos = await Producto.find(filtro);
+    res.json(productos);
 });
 
+// Guardar nuevo
 app.post('/api/productos', async (req, res) => {
-    try {
-        const nuevo = new Producto(req.body);
-        await nuevo.save();
-        res.json({ msj: "Creado" });
-    } catch (error) {
-        res.status(500).json({ error: "Error al guardar" });
-    }
+    const nuevo = new Producto(req.body);
+    await nuevo.save();
+    res.json({ msj: "Creado" });
 });
 
+// Actualización rápida (Solo stock de la ventana desplegar)
+app.put('/api/productos/:id', async (req, res) => {
+    const { cantidad } = req.body;
+    await Producto.findByIdAndUpdate(req.params.id, { cantidad });
+    res.json({ msj: "Stock actualizado" });
+});
+
+// Actualización completa (Precio y Stock del botón Editar)
+app.put('/api/productos/completo/:id', async (req, res) => {
+    const { precio, cantidad } = req.body;
+    await Producto.findByIdAndUpdate(req.params.id, { precio, cantidad });
+    res.json({ msj: "Edición completa exitosa" });
+});
+
+// Eliminar
 app.delete('/api/productos/:id', async (req, res) => {
-    try {
-        await Producto.findByIdAndDelete(req.params.id);
-        res.json({ msj: "Eliminado" });
-    } catch (error) {
-        res.status(500).json({ error: "Error al eliminar" });
-    }
+    await Producto.findByIdAndDelete(req.params.id);
+    res.json({ msj: "Eliminado" });
 });
 
-// PUERTO DINÁMICO PARA RENDER
 const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-    console.log(`✅ Servidor funcionando en el puerto ${PORT}`);
-});
+app.listen(PORT, () => console.log(`🚀 Servidor en puerto ${PORT}`));

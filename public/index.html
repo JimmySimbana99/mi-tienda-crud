@@ -2,46 +2,210 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Panel de Inventario</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Inventario - Tienda Mami Dita</title>
     <style>
-        body { display: flex; margin: 0; font-family: 'Segoe UI', sans-serif; height: 100vh; background: #f0f2f5; }
-        #sidebar { width: 260px; background: #2c3e50; color: white; padding: 20px; box-sizing: border-box; }
-        .nav-item { padding: 15px; cursor: pointer; border-radius: 5px; margin-bottom: 5px; transition: 0.3s; }
-        .nav-item:hover { background: #34495e; }
-        #main { flex-grow: 1; padding: 40px; overflow-y: auto; }
-        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        input { padding: 10px; margin: 5px 0; width: 100%; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; }
-        button { padding: 10px 20px; background: #3498db; color: white; border: none; cursor: pointer; border-radius: 4px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
-        .btn-del { background: #e74c3c; padding: 5px 10px; }
+        /* Estilos Generales */
+        body { 
+            display: flex; 
+            margin: 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            height: 100vh; 
+            background: #f0f2f5; 
+            color: #333;
+        }
+
+        /* Menú Lateral (Sidebar) */
+        #sidebar { 
+            width: 260px; 
+            background: #2c3e50; 
+            color: white; 
+            padding: 20px; 
+            box-sizing: border-box; 
+            flex-shrink: 0;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        #sidebar h2 { font-size: 1.2rem; text-align: center; margin-bottom: 20px; color: #ecf0f1; }
+        .nav-item { 
+            padding: 15px; 
+            cursor: pointer; 
+            border-radius: 8px; 
+            margin-bottom: 10px; 
+            transition: all 0.3s; 
+            display: flex; 
+            align-items: center;
+            font-weight: 500;
+        }
+        .nav-item:hover { background: #34495e; transform: translateX(5px); }
+
+        /* Contenedor Principal */
+        #main { 
+            flex-grow: 1; 
+            padding: 40px; 
+            overflow-y: auto; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .card { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            width: 100%;
+            max-width: 950px;
+            box-sizing: border-box;
+        }
+        h3 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+
+        /* Formulario e Inputs */
+        .form-group { margin-bottom: 15px; }
+        input { 
+            padding: 12px; 
+            margin: 8px 0; 
+            width: 100%; 
+            box-sizing: border-box; 
+            border: 1px solid #ddd; 
+            border-radius: 6px; 
+            font-size: 14px;
+        }
+        input:focus { border-color: #3498db; outline: none; box-shadow: 0 0 5px rgba(52,152,219,0.3); }
+
+        /* Tablas */
+        .table-container { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { background: #f8f9fa; color: #7f8c8d; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
+        th, td { padding: 15px; border-bottom: 1px solid #eee; text-align: left; }
+        tr:hover { background: #fcfcfc; }
+
+        /* Botones */
+        button { 
+            padding: 10px 18px; 
+            border: none; 
+            cursor: pointer; 
+            border-radius: 6px; 
+            font-weight: 600; 
+            transition: 0.2s;
+        }
+        .btn-save { background: #3498db; color: white; width: 100%; font-size: 16px; margin-top: 10px; }
+        .btn-update { background: #27ae60; color: white; }
+        .btn-edit { background: #f39c12; color: white; margin-right: 5px; }
+        .btn-del { background: #e74c3c; color: white; }
+        .btn-cancel { background: #95a5a6; color: white; }
+        button:hover { opacity: 0.85; transform: translateY(-1px); }
+
+        /* MODALES (Ventanas flotantes) */
+        .modal { 
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.5); 
+            backdrop-filter: blur(3px);
+        }
+        .modal-content { 
+            background: white; 
+            margin: 10% auto; 
+            padding: 30px; 
+            width: 350px; 
+            border-radius: 15px; 
+            text-align: center; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .modal-content label { display: block; text-align: left; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div id="sidebar">
-    <h2>ADMIN PANEL</h2>
-    <hr>
+    <h2>TIENDA MAMI DITA</h2>
+    <hr style="opacity: 0.2; margin-bottom: 20px;">
     <div class="nav-item" onclick="ver('form')">➕ INSERTAR PRODUCTO</div>
     <div class="nav-item" onclick="ver('lista')">👁️ VISUALIZAR PRODUCTOS</div>
+    <div class="nav-item" onclick="ver('actualizar')">🔄 ACTUALIZAR TIENDA</div>
 </div>
 
 <div id="main">
     <div id="sec-form" class="card">
         <h3>Nuevo Producto</h3>
-        <input type="text" id="nom" placeholder="Nombre del producto">
-        <input type="number" id="pre" placeholder="Precio">
-        <input type="number" id="can" placeholder="Cantidad">
-        <button onclick="guardar()">Guardar en Inventario</button>
+        <div class="form-group">
+            <input type="text" id="nom" placeholder="Nombre del producto (ej: Papas fritas)">
+            <input type="number" id="pre" placeholder="Precio (ej: 0.50)" step="0.01">
+            <input type="number" id="can" placeholder="Stock inicial">
+        </div>
+        <button class="btn-save" onclick="guardar()">Guardar en Inventario</button>
     </div>
 
     <div id="sec-lista" class="card" style="display:none">
         <h3>Inventario Total</h3>
-        <input type="text" id="busqueda" placeholder="🔍 Filtrar por nombre..." oninput="listar()">
-        <table>
-            <thead><tr><th>Nombre</th><th>Precio</th><th>Stock</th><th>Acción</th></tr></thead>
-            <tbody id="tablaBody"></tbody>
-        </table>
+        <input type="text" id="busqueda" placeholder="🔍 Buscar producto por nombre..." oninput="listar()">
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Precio Unit.</th>
+                        <th>Stock</th>
+                        <th>Total Inventario</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="sec-actualizar" class="card" style="display:none">
+        <h3>Actualizar Tienda</h3>
+        <p style="color: #666; font-size: 14px;">Usa "Desplegar" para sumar o restar stock rápidamente.</p>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Stock Actual</th>
+                        <th>Valor en Tienda</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaActualizar"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="miModal" class="modal">
+    <div class="modal-content">
+        <h3 id="modalNombre" style="color: #2980b9;">Producto</h3>
+        <p>Stock actual: <span id="modalStock" style="font-weight: bold; font-size: 1.2em;">0</span></p>
+        <hr>
+        <label>Cantidad a sumar o restar:</label>
+        <input type="number" id="cambioStock" placeholder="Ej: 10 o -5">
+        <div style="margin-top:20px;">
+            <button class="btn-update" onclick="procesarCambio()">Aplicar</button>
+            <button class="btn-cancel" onclick="cerrarModal()">Cerrar</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalEditar" class="modal">
+    <div class="modal-content">
+        <h3 style="color: #f39c12;">Editar Producto</h3>
+        <p id="editNombre" style="font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 5px;"></p>
+        
+        <label>Nuevo Precio ($):</label>
+        <input type="number" id="editPrecio" step="0.01">
+        
+        <label>Nuevo Stock Total:</label>
+        <input type="number" id="editStock">
+        
+        <div style="margin-top:20px;">
+            <button class="btn-update" onclick="guardarEdicionCompleta()">Guardar Cambios</button>
+            <button class="btn-cancel" onclick="cerrarModalEditar()">Cancelar</button>
+        </div>
     </div>
 </div>
 
